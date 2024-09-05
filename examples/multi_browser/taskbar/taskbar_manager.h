@@ -1,5 +1,7 @@
 #pragma once
 
+#include <shobjidl.h>
+
 interface ITaskbarList4;
 
 /** @class TaskbarTabItem

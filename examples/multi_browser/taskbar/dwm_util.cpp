@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "dwm_util.h"
 
 HRESULT DwmSetIconicThumbnail(HWND hwnd, HBITMAP hbmp, DWORD dwSITFlags)

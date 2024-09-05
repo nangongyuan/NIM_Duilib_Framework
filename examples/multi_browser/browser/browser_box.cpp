@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "browser_box.h"
 #include "browser/multi_browser_form.h"
 #include "browser/multi_browser_manager.h"

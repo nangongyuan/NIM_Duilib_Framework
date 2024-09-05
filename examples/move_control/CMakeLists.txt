@@ -1,24 +1,52 @@
 cmake_minimum_required(VERSION 3.10)
-
-set(TARGET_NAME move_control)
+project(move_control)
 
 add_definitions(-DUNICODE -D_UNICODE)
-
-PROJECT(${TARGET_NAME})
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../ui_components)
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR} DIR_LIB_SRC)
 
-add_executable(${TARGET_NAME} ${DIR_LIB_SRC})
-add_dependencies(${TARGET_NAME} base duilib)
-target_link_libraries(${TARGET_NAME} base)
-target_link_libraries(${TARGET_NAME} duilib)
-target_link_libraries(${TARGET_NAME} ui_components)
-set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+source_group("" FILES
+    ${CMAKE_CURRENT_LIST_DIR}/./app_db.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./app_db.h
+    ${CMAKE_CURRENT_LIST_DIR}/./app_item.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./app_item.h
+    ${CMAKE_CURRENT_LIST_DIR}/./main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./main.h
+    ${CMAKE_CURRENT_LIST_DIR}/./move_control.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./move_control.h
+    ${CMAKE_CURRENT_LIST_DIR}/./resource.h
+    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.h
+    ${CMAKE_CURRENT_LIST_DIR}/./targetver.h
+)
+
+set(SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/./app_db.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./app_db.h
+    ${CMAKE_CURRENT_LIST_DIR}/./app_item.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./app_item.h
+    ${CMAKE_CURRENT_LIST_DIR}/./main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./main.h
+    ${CMAKE_CURRENT_LIST_DIR}/./move_control.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./move_control.h
+    ${CMAKE_CURRENT_LIST_DIR}/./resource.h
+    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.h
+    ${CMAKE_CURRENT_LIST_DIR}/./targetver.h
+)
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+add_dependencies(${PROJECT_NAME} base duilib)
+target_link_libraries(${PROJECT_NAME} base)
+target_link_libraries(${PROJECT_NAME} duilib)
+target_link_libraries(${PROJECT_NAME} ui_components)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+
 if (MSVC)
-    set_target_properties(${TARGET_NAME}
+    set_target_properties(${PROJECT_NAME}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_HOME_DIRECTORY}/bin"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_HOME_DIRECTORY}/bin"

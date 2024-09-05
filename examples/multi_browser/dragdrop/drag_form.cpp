@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "drag_form.h"
 #include "bitmap_control.h"
 

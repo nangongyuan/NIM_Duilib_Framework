@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "browser_tab_item.h"
 
 using namespace ui;

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "custom_layout.h"
 
 using namespace ui;

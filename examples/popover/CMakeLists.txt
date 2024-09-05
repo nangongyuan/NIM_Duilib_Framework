@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(layouts)
+project(popover)
 
 add_definitions(-DUNICODE -D_UNICODE)
 
@@ -8,24 +8,20 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/../../)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../ui_components)
 
 source_group("" FILES
-    ${CMAKE_CURRENT_LIST_DIR}/./layouts_form.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./layouts_form.h
+    ${CMAKE_CURRENT_LIST_DIR}/./framework.h
     ${CMAKE_CURRENT_LIST_DIR}/./main.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./main.h
-    ${CMAKE_CURRENT_LIST_DIR}/./resource.h
-    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.h
+    ${CMAKE_CURRENT_LIST_DIR}/./popover_form.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./popover_form.h
+    ${CMAKE_CURRENT_LIST_DIR}/./Resource.h
     ${CMAKE_CURRENT_LIST_DIR}/./targetver.h
 )
 
 set(SOURCE_FILES
-    ${CMAKE_CURRENT_LIST_DIR}/./layouts_form.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./layouts_form.h
+    ${CMAKE_CURRENT_LIST_DIR}/./framework.h
     ${CMAKE_CURRENT_LIST_DIR}/./main.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./main.h
-    ${CMAKE_CURRENT_LIST_DIR}/./resource.h
-    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/./stdafx.h
+    ${CMAKE_CURRENT_LIST_DIR}/./popover_form.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/./popover_form.h
+    ${CMAKE_CURRENT_LIST_DIR}/./Resource.h
     ${CMAKE_CURRENT_LIST_DIR}/./targetver.h
 )
 

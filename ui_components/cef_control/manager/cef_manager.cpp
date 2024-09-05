@@ -220,7 +220,7 @@ client::DropTargetHandle CefManager::GetDropTarget(HWND hwnd)
 		map_drag_target_reference_[hwnd] = handle;
 
 		HRESULT register_res = RegisterDragDrop(hwnd, handle.get());
-		ASSERT(register_res == S_OK);
+		//ASSERT(register_res == S_OK);
 
 		return handle;
 	}

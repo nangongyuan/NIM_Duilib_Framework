@@ -328,7 +328,7 @@ public:
 protected:
 	CefRefPtr<CefBrowser>	browser_;
 	std::vector<CefRefPtr<CefBrowser>> browser_list_;
-	HWND					hwnd_;
+	HWND					hwnd_ = nullptr;
 	HandlerDelegate*		handle_delegate_;
 	RECT					rect_cef_control_;
 	std::string				paint_buffer_;
