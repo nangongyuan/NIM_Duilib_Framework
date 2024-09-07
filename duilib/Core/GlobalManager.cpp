@@ -818,6 +818,15 @@ std::wstring GlobalManager::GetResPath(const std::wstring& res_path, const std::
 		imageFullPath = GlobalManager::GetResourcePath() + res_path;
 		imageFullPath = StringHelper::ReparsePath(imageFullPath);
 	}
+
+	if (!GlobalManager::IsZipResExist(imageFullPath) && !::PathFileExists(imageFullPath.c_str())
+		&& window_res_path.empty() && res_path[0] == L'.' && res_path[1] == L'.')
+	{
+		std::wstring res_path_temp = res_path.substr(2);
+		imageFullPath = GlobalManager::GetResourcePath() + res_path_temp;
+		imageFullPath = StringHelper::ReparsePath(imageFullPath);
+	}
+
 	return imageFullPath;
 }
 

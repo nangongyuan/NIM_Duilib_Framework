@@ -16,6 +16,8 @@
 #include "base/macros.h"
 #include "base/third_party/convert_utf/ConvertUTF.h"
 
+#include <vector>
+
 namespace nbase
 {
 
@@ -572,170 +574,197 @@ char HexCharToInt8(char c)
 
 std::wstring UTF8ToUTF16(const UTF8Char *utf8, size_t length)
 {
-	UTF16Char output[4096];
-	const UTF8 *src_begin = reinterpret_cast<const UTF8 *>(utf8);
-	const UTF8 *src_end = src_begin + length;
-	UTF16 *dst_begin = reinterpret_cast<UTF16 *>(output);
-
-	std::wstring  utf16;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF8toUTF16(&src_begin,
-													 src_end,
-													 &dst_begin,
-													 dst_begin + COUNT_OF(output),
-													 lenientConversion);
-
-		utf16.append(output, dst_begin - reinterpret_cast<UTF16 *>(output));
-		dst_begin = reinterpret_cast<UTF16 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf16.clear();
-			break;
-		}
+	if (utf8 == nullptr || length == 0) {
+		return std::wstring();
 	}
 
-	return utf16;
+	// 计算所需的UTF-16缓冲区大小
+	int utf16Size = MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(length), nullptr, 0);
+	if (utf16Size == 0) {
+		// 处理错误
+		return std::wstring();
+	}
+
+	// 分配UTF-16缓冲区
+	std::wstring utf16Str(utf16Size, 0);
+
+	// 将UTF-8转换为UTF-16
+	int result = MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(length), &utf16Str[0], utf16Size);
+	if (result == 0) {
+		// 处理错误
+		return std::wstring();
+	}
+
+	return utf16Str;
 }
 
 std::string UTF16ToUTF8(const UTF16Char *utf16, size_t length)
 {
-	UTF8Char output[8192];
-	const UTF16 *src_begin = reinterpret_cast<const UTF16 *>(utf16);
-	const UTF16 *src_end = src_begin + length;
-	UTF8 *dst_begin = reinterpret_cast<UTF8 *>(output);
-
-	std::string utf8;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF16toUTF8(&src_begin,
-													 src_end,
-													 &dst_begin,
-													 dst_begin + COUNT_OF(output),
-													 lenientConversion);
-
-		utf8.append(output, dst_begin - reinterpret_cast<UTF8 *>(output));
-		dst_begin = reinterpret_cast<UTF8 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf8.clear();
-			break;
-		}
+	if (utf16 == nullptr || length == 0) {
+		return std::string();
 	}
 
-	return utf8;
+	// 计算所需的UTF-8缓冲区大小
+	int utf8Size = WideCharToMultiByte(CP_UTF8, 0, utf16, static_cast<int>(length), nullptr, 0, nullptr, nullptr);
+	if (utf8Size == 0) {
+		// 处理错误
+		return std::string();
+	}
+
+	// 分配UTF-8缓冲区
+	std::string utf8Str(utf8Size, 0);
+
+	// 将UTF-16转换为UTF-8
+	int result = WideCharToMultiByte(CP_UTF8, 0, utf16, static_cast<int>(length), &utf8Str[0], utf8Size, nullptr, nullptr);
+	if (result == 0) {
+		// 处理错误
+		return std::string();
+	}
+
+	return utf8Str;
 }
 
 std::basic_string<UTF32Char> UTF8ToUTF32(const UTF8Char *utf8, size_t length)
 {
-	UTF32Char output[4096];
-	const UTF8 *src_begin = reinterpret_cast<const UTF8 *>(utf8);
-	const UTF8 *src_end = src_begin + length;
-	UTF32 *dst_begin = reinterpret_cast<UTF32 *>(output);
-
-	std::basic_string<UTF32Char> utf32;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF8toUTF32(&src_begin,
-													 src_end,
-													 &dst_begin,
-													 dst_begin + COUNT_OF(output),
-													 lenientConversion);
-
-		utf32.append(output, dst_begin - reinterpret_cast<UTF32 *>(output));
-		dst_begin = reinterpret_cast<UTF32 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf32.clear();
-			break;
-		}
+	if (utf8 == nullptr || length == 0) {
+		return std::basic_string<UTF32Char>();
 	}
 
-	return utf32;
+	// 第一步：将UTF-8转换为UTF-16
+	int utf16Size = MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(length), nullptr, 0);
+	if (utf16Size == 0) {
+		return std::basic_string<UTF32Char>();
+	}
+
+	std::vector<wchar_t> utf16Str(utf16Size);
+	int result = MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(length), &utf16Str[0], utf16Size);
+	if (result == 0) {
+		return std::basic_string<UTF32Char>();
+	}
+
+	// 第二步：将UTF-16转换为UTF-32
+	std::basic_string<UTF32Char> utf32Str;
+	for (wchar_t wc : utf16Str) {
+		utf32Str.push_back(static_cast<char32_t>(wc)); // 简单的宽字符到32位字符的转换
+	}
+
+	return utf32Str;
 }
 
 std::string UTF32ToUTF8(const UTF32Char *utf32, size_t length)
 {
-	UTF8Char output[8192];
-	const UTF32 *src_begin = reinterpret_cast<const UTF32 *>(utf32);
-	const UTF32 *src_end = src_begin + length;
-	UTF8 *dst_begin = reinterpret_cast<UTF8 *>(output);
-		
-	std::string utf8;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF32toUTF8(&src_begin,
-													 src_end,
-													 &dst_begin,
-													 dst_begin + COUNT_OF(output),
-													 lenientConversion);
+	if (utf32 == nullptr || length == 0) {
+		return std::string();
+	}
 
-		utf8.append(output, dst_begin - reinterpret_cast<UTF8 *>(output));
-		dst_begin = reinterpret_cast<UTF8 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf8.clear();
-			break;
+	// 第一步：将UTF-32转换为UTF-16
+	std::vector<wchar_t> utf16Str;
+	for (size_t i = 0; i < length; ++i) {
+		char32_t ch = utf32[i];
+		if (ch <= 0xFFFF) {
+			// 基本多语言平面字符
+			utf16Str.push_back(static_cast<wchar_t>(ch));
+		}
+		else {
+			// 超出基本多语言平面，使用代理对
+			ch -= 0x10000;
+			utf16Str.push_back(static_cast<wchar_t>((ch >> 10) + 0xD800)); // 高代理
+			utf16Str.push_back(static_cast<wchar_t>((ch & 0x3FF) + 0xDC00)); // 低代理
 		}
 	}
 
-	return utf8;
+	// 第二步：将UTF-16转换为UTF-8
+	int utf8Size = WideCharToMultiByte(CP_UTF8, 0, utf16Str.data(), static_cast<int>(utf16Str.size()), nullptr, 0, nullptr, nullptr);
+	if (utf8Size == 0) {
+		return std::string();
+	}
+
+	std::string utf8Str(utf8Size, 0);
+	int result = WideCharToMultiByte(CP_UTF8, 0, utf16Str.data(), static_cast<int>(utf16Str.size()), &utf8Str[0], utf8Size, nullptr, nullptr);
+	if (result == 0) {
+		return std::string();
+	}
+
+	return utf8Str;
 }
 
 std::basic_string<UTF32Char> UTF16ToUTF32(const UTF16Char *utf16, size_t length)
 {
-	UTF32Char output[4096];
-	const UTF16 *src_begin = reinterpret_cast<const UTF16 *>(utf16);
-	const UTF16 *src_end = src_begin + length;
-	UTF32 *dst_begin = reinterpret_cast<UTF32 *>(output);
+	if (utf16 == nullptr || length == 0) {
+		return std::basic_string<UTF32Char>();
+	}
 
-	std::basic_string<UTF32Char> utf32;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF16toUTF32(&src_begin,
-													  src_end,
-													  &dst_begin,
-													  dst_begin + COUNT_OF(output),
-													  lenientConversion);
+	std::basic_string<UTF32Char> utf32Str;
+	utf32Str.reserve(length); // 预先分配一些空间，防止频繁扩展
 
-		utf32.append(output, dst_begin - reinterpret_cast<UTF32 *>(output));
-		dst_begin = reinterpret_cast<UTF32 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf32.clear();
-			break;
+	for (size_t i = 0; i < length; ++i) {
+		wchar_t wc = utf16[i];
+
+		// 检查是否为高代理
+		if (wc >= 0xD800 && wc <= 0xDBFF) {
+			// 这是一个高代理字符，需要与下一个低代理字符组合
+			if (i + 1 < length) {
+				wchar_t lowSurrogate = utf16[i + 1];
+				if (lowSurrogate >= 0xDC00 && lowSurrogate <= 0xDFFF) {
+					// 计算出完整的UTF-32字符
+					char32_t fullChar = ((wc - 0xD800) << 10) + (lowSurrogate - 0xDC00) + 0x10000;
+					utf32Str.push_back(fullChar);
+					++i; // 跳过低代理
+				}
+				else {
+					// 处理错误，低代理字符无效
+					return std::basic_string<UTF32Char>();
+				}
+			}
+			else {
+				// 高代理字符后没有足够的字符组合为代理对
+				return std::basic_string<UTF32Char>();
+			}
+		}
+		else if (wc >= 0xDC00 && wc <= 0xDFFF) {
+			// 如果遇到未配对的低代理，直接报告错误
+			return std::basic_string<UTF32Char>();
+		}
+		else {
+			// 基本多语言平面的字符，直接转换
+			utf32Str.push_back(static_cast<char32_t>(wc));
 		}
 	}
 
-	return utf32;
+	return utf32Str;
 }
 
 std::wstring UTF32ToUTF16(const UTF32Char *utf32, size_t length)
 {
-	UTF16Char output[8192];
-	const UTF32 *src_begin = reinterpret_cast<const UTF32 *>(utf32);
-	const UTF32 *src_end = src_begin + length;
-	UTF16 *dst_begin = reinterpret_cast<UTF16 *>(output);
+	if (utf32 == nullptr || length == 0) {
+		return std::wstring();
+	}
 
-	std::wstring utf16;
-	while (src_begin < src_end)
-	{
-		ConversionResult result = ConvertUTF32toUTF16(&src_begin,
-													  src_end,
-													  &dst_begin,
-													  dst_begin + COUNT_OF(output),
-													  lenientConversion);
+	std::wstring utf16Str;
+	utf16Str.reserve(length); // 预先分配空间
 
-		utf16.append(output, dst_begin - reinterpret_cast<UTF16 *>(output));
-		dst_begin = reinterpret_cast<UTF16 *>(output);
-		if (result == sourceIllegal || result == sourceExhausted)
-		{
-			utf16.clear();
-			break;
+	for (size_t i = 0; i < length; ++i) {
+		char32_t ch = utf32[i];
+
+		if (ch <= 0xFFFF) {
+			// 基本多语言平面字符
+			utf16Str.push_back(static_cast<char16_t>(ch));
+		}
+		else if (ch > 0x10FFFF) {
+			// 如果字符超出UTF-32的有效范围，返回错误
+			return std::wstring();
+		}
+		else {
+			// 超出基本多语言平面的字符，使用代理对
+			ch -= 0x10000;
+			char16_t highSurrogate = static_cast<char16_t>((ch >> 10) + 0xD800); // 高代理
+			char16_t lowSurrogate = static_cast<char16_t>((ch & 0x3FF) + 0xDC00); // 低代理
+			utf16Str.push_back(highSurrogate);
+			utf16Str.push_back(lowSurrogate);
 		}
 	}
 
-	return utf16;
+	return utf16Str;
 }
 
 std::wstring UTF8ToUTF16(const std::string &utf8)

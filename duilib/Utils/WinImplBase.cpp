@@ -268,7 +268,9 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	std::wstring strSkinFile = GetWindowResourcePath() + GetSkinFile();
 
 	auto callback = nbase::Bind(&WindowImplBase::CreateControl, this, std::placeholders::_1);
-	auto pRoot = (Box*)builder.Create(strSkinFile.c_str(), callback, this);
+	std::wstring xml_layout = GetXmlLayout();
+	StringHelper::Trim(xml_layout);
+	auto pRoot = (Box*)builder.Create(xml_layout.empty() ? strSkinFile.c_str() : xml_layout.c_str(), callback, this);
 
 	ASSERT(pRoot && L"Faield to load xml file.");
 	if (pRoot == NULL) {

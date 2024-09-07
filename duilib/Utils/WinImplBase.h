@@ -280,6 +280,8 @@ public:
 	void ToTopMost(bool forever);
 		
 protected:
+  virtual std::wstring GetXmlLayout() { return std::wstring(); };
+
     /**
      * @brief 创建窗口时被调用，由子类实现用以获取窗口皮肤目录
      * @return 子类需实现并返回窗口皮肤目录
